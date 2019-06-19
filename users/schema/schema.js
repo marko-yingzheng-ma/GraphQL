@@ -1,5 +1,5 @@
 const graphql = require('graphql');
-const _ = require('lodash');
+const axios = require('axios');
 
 const {
   GraphQLObjectType,
@@ -34,7 +34,8 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLString }}, // if given a user id, it should returns a UserType user.
       // goes to the data graph and find the one we are looking for. e.g. a UserType user with id 23.
       resolve(parentValue, args) {
-        return _.find(users, { id: args.id });
+        return axios.get(`http://localhost:3000/users/${args.id}`)
+          .then(response => response.data);
       }
     }
   }
