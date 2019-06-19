@@ -8,12 +8,6 @@ const {
   GraphQLSchema   // take a root query and returns a graphQL schema instance
 } = graphql;
 
-// dummy user data
-const users = [
-  { id: '23', firstName: 'Bill', age: 20 },
-  { id: '47', firstName: 'Sam', age: 21 }
-];
-
 // User schema
 const UserType = new GraphQLObjectType({
   // required properties
