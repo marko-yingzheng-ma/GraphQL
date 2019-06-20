@@ -6,7 +6,8 @@ const {
   GraphQLString,
   GraphQLInt,
   GraphQLSchema,   // take a root query and returns a graphQL schema instance
-  GraphQLList
+  GraphQLList,
+  GraphQLNonNull
 } = graphql;
 
 // Company schema
@@ -66,8 +67,28 @@ const RootQuery = new GraphQLObjectType({
       }
     }
   }
-})
+});
+
+// mutation type
+const mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    addUser: {
+      type: UserType,
+      args: {
+        firstName: { type: new GraphQLNonNull(GraphQLString) },
+        age: { type: new GraphQLNonNull(GraphQLInt) },
+        companyId: { type: GraphQLString }
+      },
+      resolve(parentValue, { firstName, age }) {
+        return axios.post('http://localhost:3000/users', { firstName: firstName, age: age })
+          .then(response => response.data)
+      }
+    }
+  }
+});
 
 module.exports = new GraphQLSchema({
-  query: RootQuery
-})
+  query: RootQuery,
+  mutation: mutation
+});
