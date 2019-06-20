@@ -5,24 +5,32 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
-  GraphQLSchema   // take a root query and returns a graphQL schema instance
+  GraphQLSchema,   // take a root query and returns a graphQL schema instance
+  GraphQLList
 } = graphql;
 
 // Company schema
 const CompanyType = new GraphQLObjectType({
   name: 'Company',
-  fields: {
+  fields: () => ({
     id: { type: GraphQLString },
     name: { type: GraphQLString },
-    description: { type: GraphQLString }
-  }
+    description: { type: GraphQLString },
+    users: {
+      type: new GraphQLList(UserType),
+      resolve(parentValue, args) {
+        return axios.get(`http://localhost:3000/companies/${parentValue.id}/users`)
+          .then(response => response.data)
+      }
+    }
+  })
 })
 
 // User schema
 const UserType = new GraphQLObjectType({
   // required properties
   name: 'User', // type name
-  fields: {
+  fields: () => ({
     id: { type: GraphQLString },
     firstName: { type: GraphQLString },
     age: { type: GraphQLInt },
@@ -33,7 +41,7 @@ const UserType = new GraphQLObjectType({
           .then(response => response.data)
       }
     }
-  }
+  })
 });
 
 // root query - jump and land on a specific node of the graph
